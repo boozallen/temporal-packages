@@ -69,8 +69,10 @@ jobs:
 
       - name: Lint
         run: |
-          uv run ruff check packages/${{ steps.tag.outputs.package }}/
-          uv run ruff format --check packages/${{ steps.tag.outputs.package }}/
+          # src and tests only, as the justfile's lint and format recipes run it: a
+          # package's README code blocks and loose scripts are not linted code.
+          uv run ruff check packages/${{ steps.tag.outputs.package }}/src packages/${{ steps.tag.outputs.package }}/tests
+          uv run ruff format --check packages/${{ steps.tag.outputs.package }}/src packages/${{ steps.tag.outputs.package }}/tests
 
       - name: Type-check
         run: uv run basedpyright packages/${{ steps.tag.outputs.package }}/src/

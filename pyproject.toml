@@ -1,0 +1,124 @@
+# Temporal Packages Monorepo
+# UV Workspace configuration for managing multiple Python packages
+
+[project]
+name = "temporal-packages-workspace"
+version = "1.1.0"
+license = "Apache-2.0"
+license-files = ["LICENSE*", "NOTICE*"]
+description = "Monorepo workspace for Temporal-related Python packages"
+readme = "README.md"
+requires-python = ">=3.14,<3.16"
+dependencies = [
+    "foundry-doc-ingest",
+    "foundry-doc-ingest-aws",
+    "foundry-strands-agents",
+    "foundry-temporal-agents",
+    "foundry-temporal",
+]
+
+# Dev dependencies for development tooling
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=4.0",
+    "pytest-asyncio>=0.23",
+    "respx>=0.23.0",
+    "ruff>=0.8",
+    "basedpyright>=1.19",
+    "bandit[toml]>=1.7.0",
+]
+
+[tool.uv]
+required-version = ">=0.5.0"
+# Security floor for transitive dependencies pulled in by foundry-strands-agents,
+# foundry-temporal, and foundry-agent-core.
+constraint-dependencies = [
+    "aiohttp>=3.14.3",
+    "anyio>=4.14.2",
+    "cryptography>=50.0.0",
+    "multidict>=6.9.1",
+    "urllib3>=2.8.0",
+]
+
+[tool.uv.workspace]
+members = ["packages/*"]
+
+[tool.uv.sources]
+# Local path to foundry-agent-core for active development
+# foundry-agent-core = { path = "../foundry-agent-packages/packages/foundry-agent-core" }
+foundry-doc-ingest = { workspace = true }
+foundry-doc-ingest-aws = { workspace = true }
+foundry-strands-agents = { workspace = true }
+foundry-temporal-agents = { workspace = true }
+foundry-temporal = { workspace = true }
+
+# Shared tool configuration for all packages
+foundry-agent-core = {url = "https://github.com/boozallen/foundry-agent-packages/releases/download/foundry-agent-core/v1.4.0/foundry_agent_core-1.4.0-py3-none-any.whl"}
+
+[tool.ruff]
+target-version = "py314"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "C4"]
+# STIG V-222604 (SRG-APP-000251, CCI-001310) - prohibit command-injection sinks
+# across all workspace packages. Enforced in CI. S602-S607 map to bandit
+# B602-B607 (subprocess/shell/os.system/os.popen); S102 = exec, S307 = eval.
+extend-select = ["S102", "S307", "S602", "S603", "S604", "S605", "S606", "S607"]
+
+[tool.bandit]
+# Narrow command-injection sink set for STIG V-222604, run by `just lint`
+# alongside ruff's S102/S307/S602-S607 and independently in CI.
+exclude_dirs = ["tests", "openspec"]
+targets = ["packages"]
+skips = ["B101"]
+
+[tool.basedpyright]
+pythonVersion = "3.14"
+include = ["packages/*/src"]
+exclude = ["**/build", "**/dist", "**/.venv", "**/__pycache__"]
+typeCheckingMode = "basic"
+
+[tool.pytest.ini_options]
+testpaths = ["packages/*/tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+# Coverage flags stay out of the root addopts: the root `just test` loops pass a
+# workspace-root-relative `--cov=packages/<pkg>/src/<module>` on the command line,
+# so a root-level `--cov=src/...` would not resolve.
+#
+# `--import-mode=importlib` is required for a root run across `packages/*/tests`.
+# Ten test file basenames are shared between `foundry-temporal-agents` and
+# either `foundry-strands-agents` or `foundry-temporal` (the agents packages are
+# near-copies of each other). Under the default `prepend` import mode, two test
+# files with the same basename and no containing package resolve to the same
+# module name, and collection aborts with `import file mismatch`. `importlib`
+# derives a unique module name per file path, so no `tests/__init__.py` is
+# needed anywhere. Every package repeats this flag in its own addopts, because a
+# package-level run reads only that package's config; it is set uniformly rather
+# than only on the colliding packages so that adding a test file never has to be
+# checked against every other package's basenames.
+addopts = "-v --tb=short --strict-markers --strict-config --import-mode=importlib"
+markers = [
+    "unit: unit tests (fast, no external services or credentials required)",
+    "integration: integration tests (may require external services or credentials)",
+    "slow: tests that may take longer to run",
+    "network: tests that require network access",
+    "temporal: tests that interact with Temporal services",
+    "aws: tests that interact with AWS services",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+    "ignore:.*datetime.*:DeprecationWarning",
+    "ignore:.*pkg_resources.*:DeprecationWarning",
+]
+
+[tool.coverage.run]
+source = ["packages/*/src"]
+branch = true
+
+[tool.coverage.report]
+fail_under = 70
+

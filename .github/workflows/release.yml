@@ -1,0 +1,193 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "*/v*"
+      - "!foundry-strands-agents/v*"
+
+# Safe default for any job that doesn't declare its own `permissions:`
+# block (e.g. a job added later without one) — falls back to no access
+# instead of the repository/org default GITHUB_TOKEN scope.
+permissions: {}
+
+env:
+  PYTHON_VERSION: "3.14"
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Parse tag
+        id: tag
+        run: |
+          TAG=${GITHUB_REF#refs/tags/}
+          PACKAGE=${TAG%/v*}
+          VERSION=${TAG#*/v}
+          MODULE=${PACKAGE//-/_}
+          echo "package=$PACKAGE" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "module=$MODULE" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - name: Setup Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install uv
+        run: pip install uv==0.12.18
+
+      - name: Install dependencies
+        run: uv sync --all-packages --all-groups
+
+      - name: Validate package exists
+        run: |
+          if [ ! -f "packages/${{ steps.tag.outputs.package }}/pyproject.toml" ]; then
+            echo "::error::Package directory not found: packages/${{ steps.tag.outputs.package }}"
+            exit 1
+          fi
+
+      - name: Validate version consistency
+        run: |
+          TOML_VERSION=$(python -c "
+          import tomllib
+          with open('packages/${{ steps.tag.outputs.package }}/pyproject.toml', 'rb') as f:
+              data = tomllib.load(f)
+          print(data['project']['version'])
+          ")
+          if [ "$TOML_VERSION" != "${{ steps.tag.outputs.version }}" ]; then
+            echo "::error::Tag version (${{ steps.tag.outputs.version }}) does not match pyproject.toml version ($TOML_VERSION)"
+            exit 1
+          fi
+
+      - name: Lint
+        run: |
+          # src and tests only, as the justfile's lint and format recipes run it: a
+          # package's README code blocks and loose scripts are not linted code.
+          uv run ruff check packages/${{ steps.tag.outputs.package }}/src packages/${{ steps.tag.outputs.package }}/tests
+          uv run ruff format --check packages/${{ steps.tag.outputs.package }}/src packages/${{ steps.tag.outputs.package }}/tests
+
+      - name: Type-check
+        run: uv run basedpyright packages/${{ steps.tag.outputs.package }}/src/
+
+      - name: Test
+        run: |
+          uv run pytest packages/${{ steps.tag.outputs.package }}/tests/ -x -q \
+            --cov=packages/${{ steps.tag.outputs.package }}/src/${{ steps.tag.outputs.module }}
+
+      - name: Build wheel and sdist
+        run: |
+          uv build --package ${{ steps.tag.outputs.package }} \
+            --out-dir packages/${{ steps.tag.outputs.package }}/dist
+
+      - name: Install cyclonedx-py
+        run: uv tool install cyclonedx-bom==7.3.0
+
+      - name: Generate SBOM
+        run: |
+          uv export \
+            --package ${{ steps.tag.outputs.package }} \
+            --no-hashes --no-header --frozen | \
+          cyclonedx-py requirements \
+            --pyproject packages/${{ steps.tag.outputs.package }}/pyproject.toml \
+            --mc-type library \
+            --of JSON \
+            -o packages/${{ steps.tag.outputs.package }}/dist/${{ steps.tag.outputs.package }}-sbom.json -
+
+      - name: Install Grype
+        run: |
+          set -euo pipefail
+          VERSION=0.119.0
+          ASSET="grype_${VERSION}_linux_amd64.tar.gz"
+          SHA256="3fa2dc4b924621ab65404cf08d0b8438d896d80ab949c9d5a4ca283c36004c9b"
+          curl -sSfLO "https://github.com/anchore/grype/releases/download/v${VERSION}/${ASSET}"
+          echo "${SHA256}  ${ASSET}" | sha256sum -c -
+          tar -xzf "${ASSET}" grype
+          install -m 0755 grype /usr/local/bin/grype
+          rm -f "${ASSET}" grype
+
+      - name: Run Grype scan
+        id: grype
+        continue-on-error: true
+        run: |
+          grype \
+            packages/${{ steps.tag.outputs.package }}/dist/*.whl \
+            -o json \
+            > packages/${{ steps.tag.outputs.package }}/dist/${{ steps.tag.outputs.package }}-grype.json
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ASSETS=(
+            packages/${{ steps.tag.outputs.package }}/dist/*.whl
+            packages/${{ steps.tag.outputs.package }}/dist/*.tar.gz
+            packages/${{ steps.tag.outputs.package }}/dist/${{ steps.tag.outputs.package }}-sbom.json
+          )
+          GRYPE_REPORT="packages/${{ steps.tag.outputs.package }}/dist/${{ steps.tag.outputs.package }}-grype.json"
+          if [ -f "$GRYPE_REPORT" ]; then
+            ASSETS+=("$GRYPE_REPORT")
+          fi
+          gh release create "${{ steps.tag.outputs.tag }}" \
+            --title "${{ steps.tag.outputs.package }} v${{ steps.tag.outputs.version }}" \
+            --generate-notes \
+            "${ASSETS[@]}"
+
+  install-validation:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    needs: build-release
+    steps:
+      - name: Parse tag
+        id: tag
+        run: |
+          TAG=${GITHUB_REF#refs/tags/}
+          PACKAGE=${TAG%/v*}
+          MODULE=${PACKAGE//-/_}
+          echo "package=$PACKAGE" >> "$GITHUB_OUTPUT"
+          echo "module=$MODULE" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Download wheels from releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/wheels
+          for pkg in foundry-temporal foundry-temporal-agents foundry-doc-ingest foundry-doc-ingest-aws; do
+            tag=$(gh release list --repo ${{ github.repository }} --json tagName,publishedAt \
+              --jq "[.[] | select(.tagName | startswith(\"$pkg/\"))] | sort_by(.publishedAt) | last | .tagName")
+            if [ -n "$tag" ] && [ "$tag" != "null" ]; then
+              gh release download "$tag" --repo ${{ github.repository }} --pattern "*.whl" --dir /tmp/wheels --clobber
+            fi
+          done
+          # foundry-temporal pins foundry-agent-core, which is not on PyPI.
+          # Download the version the released foundry-temporal wheel needs.
+          for whl in /tmp/wheels/foundry_temporal-*.whl; do
+            [ -f "$whl" ] || continue
+            CORE_VERSION=$(unzip -p "$whl" '*.dist-info/METADATA' | \
+              sed -nE 's/^Requires-Dist: foundry[-_.]agent[-_.]core ?== ?([^ ;]+).*/\1/p')
+            gh release download "foundry-agent-core/v$CORE_VERSION" \
+              --repo boozallen/foundry-agent-packages \
+              --pattern "*.whl" --dir /tmp/wheels --clobber
+          done
+
+      - name: Validate install and import
+        run: |
+          python -m venv /tmp/install-validation
+          source /tmp/install-validation/bin/activate
+          pip install /tmp/wheels/*.whl
+          python -c "import ${{ steps.tag.outputs.module }}; print('Import OK:', '${{ steps.tag.outputs.module }}')"

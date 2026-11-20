@@ -1,0 +1,54 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "foundry-doc-ingest"
+version = "0.2.0"
+license = "Apache-2.0"
+license-files = ["LICENSE*", "NOTICE*"]
+description = "Document ingestion activities for Temporal workflows - file validation, local storage, and provenance tracking"
+requires-python = ">=3.14,<3.16"
+
+dependencies = [
+    "temporalio==1.21.1",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/foundry_doc_ingest"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+pythonpath = ["src"]
+addopts = "-v --tb=short --strict-markers --strict-config --import-mode=importlib --cov=src/foundry_doc_ingest --cov-report=term-missing --cov-report=html:htmlcov/foundry_doc_ingest --cov-fail-under=70"
+markers = [
+    "unit: unit tests (fast, no external services or credentials required)",
+    "integration: integration tests (may require external services or credentials)",
+    "slow: tests that may take longer to run",
+    "network: tests that require network access",
+    "temporal: tests that interact with Temporal services",
+    "aws: tests that interact with AWS services",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+    "ignore:.*datetime.*:DeprecationWarning",
+    "ignore:.*pkg_resources.*:DeprecationWarning",
+]
+
+[tool.coverage.run]
+source = ["src/foundry_doc_ingest"]
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+]

@@ -123,14 +123,13 @@ repository) as a published, hash-locked release rather than from a local checkou
 - Update docs when behavior or interfaces change
 - Bump the version only for the packages you are releasing; each package's version
   lives in its own `pyproject.toml`
-- Ensure all checks pass before requesting review
+- Ensure `just check` passes locally before requesting review
 
 ## Submitting a Pull Request
 
 1. Open a pull request from your fork's branch to `upstream/develop`
 2. Fill out the PR template checklist
-3. Wait for CI checks to pass
-4. A maintainer will review your PR — only designated maintainers have merge rights
+3. A maintainer will review your PR — only designated maintainers have merge rights
 
 ### What to Expect
 
@@ -147,7 +146,6 @@ This project uses a maintainer-controlled merge model:
   can merge pull requests
 - At least two approving reviews are required
 - At least one CODEOWNERS review is required
-- All CI checks must pass before merge
 - Stale approvals are dismissed when new commits are pushed
 - No bypass is allowed — maintainers follow the same review process
 

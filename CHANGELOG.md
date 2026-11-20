@@ -13,46 +13,16 @@ Per-package versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.1.0] - 2026-11-05
+## [1.1.0] - 2026-11-20
 
-### Changed
+First public release.
 
-- foundry-temporal-agents: 0.3.0 to 0.4.0
+### Added
 
-## [1.0.0] - 2026-10-19
+- foundry-temporal 4.0.0
+- foundry-temporal-agents 0.4.0
+- foundry-doc-ingest 0.2.0
+- foundry-doc-ingest-aws 0.2.0
 
-### Changed
-
-- foundry-temporal: 3.2.0 to 4.0.0
-
-## [0.2.0] - 2026-10-19
-
-### Changed
-
-- foundry-doc-ingest: 0.1.0 to 0.2.0
-- foundry-doc-ingest-aws: 0.1.0 to 0.2.0
-- foundry-temporal: 3.1.0 to 3.2.0
-- foundry-temporal-agents: 0.2.0 to 0.3.0
-
-## [0.1.0] - 2026-10-08
-
-### Changed
-
-- foundry-temporal: 3.0.0 to 3.1.0
-- foundry-temporal-agents: 0.1.0 to 0.2.0
-
-### Removed
-
-Both removals shipped in the 2026-09-25 release, before this section's version.
-
-- Removed `foundry-auth` from this repo. It has no real Temporal coupling and
-  has moved to
-  [foundry-agent-packages](https://github.com/boozallen/foundry-agent-packages).
-  Already-published wheels remain resolvable on the Github registry for pinned
-  consumers; new installs should target foundry-agent-packages.
-- Removed `foundry-aws-utilities` from this repo. It has no real Temporal
-  coupling and has moved to
-  [foundry-agent-packages](https://github.com/boozallen/foundry-agent-packages).
-  Already-published wheels remain resolvable on the Github registry for pinned
-  consumers; new installs should target foundry-agent-packages.
-
+`foundry-auth` and `foundry-aws-utilities` are released from
+[foundry-agent-packages](https://github.com/boozallen/foundry-agent-packages).

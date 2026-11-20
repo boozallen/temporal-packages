@@ -6,7 +6,6 @@ requires-python = ">=3.14, <3.16"
 members = [
     "foundry-doc-ingest",
     "foundry-doc-ingest-aws",
-    "foundry-strands-agents",
     "foundry-temporal",
     "foundry-temporal-agents",
     "temporal-packages-workspace",
@@ -543,25 +542,6 @@ requires-dist = [
     { name = "boto3", specifier = "==1.42.24" },
     { name = "foundry-doc-ingest", editable = "packages/foundry-doc-ingest" },
     { name = "temporalio", specifier = "==1.21.1" },
-]
-
-[[package]]
-name = "foundry-strands-agents"
-version = "0.8.1"
-source = { editable = "packages/foundry-strands-agents" }
-dependencies = [
-    { name = "aiohttp" },
-    { name = "foundry-temporal" },
-    { name = "pydantic" },
-    { name = "temporalio" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "aiohttp", specifier = ">=3.14.1,<4" },
-    { name = "foundry-temporal", editable = "packages/foundry-temporal" },
-    { name = "pydantic", specifier = ">=2.12.5,<3" },
-    { name = "temporalio", specifier = ">=1.21.1,<2" },
 ]
 
 [[package]]
@@ -1361,7 +1341,6 @@ source = { virtual = "." }
 dependencies = [
     { name = "foundry-doc-ingest" },
     { name = "foundry-doc-ingest-aws" },
-    { name = "foundry-strands-agents" },
     { name = "foundry-temporal" },
     { name = "foundry-temporal-agents" },
 ]
@@ -1381,7 +1360,6 @@ dev = [
 requires-dist = [
     { name = "foundry-doc-ingest", editable = "packages/foundry-doc-ingest" },
     { name = "foundry-doc-ingest-aws", editable = "packages/foundry-doc-ingest-aws" },
-    { name = "foundry-strands-agents", editable = "packages/foundry-strands-agents" },
     { name = "foundry-temporal", editable = "packages/foundry-temporal" },
     { name = "foundry-temporal-agents", editable = "packages/foundry-temporal-agents" },
 ]

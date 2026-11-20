@@ -7,7 +7,6 @@ For per-package detail see each package's own `CHANGELOG.md`:
 - [foundry-temporal-agents](packages/foundry-temporal-agents/CHANGELOG.md)
 - [foundry-doc-ingest](packages/foundry-doc-ingest/CHANGELOG.md)
 - [foundry-doc-ingest-aws](packages/foundry-doc-ingest-aws/CHANGELOG.md)
-- [foundry-strands-agents](packages/foundry-strands-agents/CHANGELOG.md) (deprecated)
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Per-package versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -18,7 +17,6 @@ Per-package versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- foundry-strands-agents: 0.8.0 to 0.8.1
 - foundry-temporal-agents: 0.3.0 to 0.4.0
 
 ## [1.0.0] - 2026-10-19
@@ -33,7 +31,6 @@ Per-package versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - foundry-doc-ingest: 0.1.0 to 0.2.0
 - foundry-doc-ingest-aws: 0.1.0 to 0.2.0
-- foundry-strands-agents: 0.7.0 to 0.8.0
 - foundry-temporal: 3.1.0 to 3.2.0
 - foundry-temporal-agents: 0.2.0 to 0.3.0
 
@@ -41,7 +38,6 @@ Per-package versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- foundry-strands-agents: 0.6.1 to 0.7.0
 - foundry-temporal: 3.0.0 to 3.1.0
 - foundry-temporal-agents: 0.1.0 to 0.2.0
 

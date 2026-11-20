@@ -26,7 +26,6 @@ compose them into a deployable worker.
 | [foundry-temporal-agents](packages/foundry-temporal-agents/) | Temporal integration helpers for calling Strands agents from workflows via the A2A protocol | 0.4.0 |
 | [foundry-doc-ingest](packages/foundry-doc-ingest/) | Document ingestion activities for Temporal workflows — file validation, local storage, provenance tracking | 0.2.0 |
 | [foundry-doc-ingest-aws](packages/foundry-doc-ingest-aws/) | AWS integration for document ingestion — S3 upload and Bedrock Knowledge Base sync | 0.2.0 |
-| [foundry-strands-agents](packages/foundry-strands-agents/) | **Deprecated** — use `foundry-temporal-agents`. Kept for existing adopters | 0.8.0 |
 
 All packages support Python 3.14 and 3.15.
 

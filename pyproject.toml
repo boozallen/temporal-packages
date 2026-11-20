@@ -12,7 +12,6 @@ requires-python = ">=3.14,<3.16"
 dependencies = [
     "foundry-doc-ingest",
     "foundry-doc-ingest-aws",
-    "foundry-strands-agents",
     "foundry-temporal-agents",
     "foundry-temporal",
 ]
@@ -31,8 +30,8 @@ dev = [
 
 [tool.uv]
 required-version = ">=0.5.0"
-# Security floor for transitive dependencies pulled in by foundry-strands-agents,
-# foundry-temporal, and foundry-agent-core.
+# Security floor for transitive dependencies pulled in by foundry-temporal and
+# foundry-agent-core.
 constraint-dependencies = [
     "aiohttp>=3.14.3",
     "anyio>=4.14.2",
@@ -49,7 +48,6 @@ members = ["packages/*"]
 # foundry-agent-core = { path = "../foundry-agent-packages/packages/foundry-agent-core" }
 foundry-doc-ingest = { workspace = true }
 foundry-doc-ingest-aws = { workspace = true }
-foundry-strands-agents = { workspace = true }
 foundry-temporal-agents = { workspace = true }
 foundry-temporal = { workspace = true }
 
@@ -89,9 +87,8 @@ asyncio_default_fixture_loop_scope = "function"
 # so a root-level `--cov=src/...` would not resolve.
 #
 # `--import-mode=importlib` is required for a root run across `packages/*/tests`.
-# Ten test file basenames are shared between `foundry-temporal-agents` and
-# either `foundry-strands-agents` or `foundry-temporal` (the agents packages are
-# near-copies of each other). Under the default `prepend` import mode, two test
+# Three test file basenames are shared between `foundry-temporal-agents` and
+# `foundry-temporal`. Under the default `prepend` import mode, two test
 # files with the same basename and no containing package resolve to the same
 # module name, and collection aborts with `import file mismatch`. `importlib`
 # derives a unique module name per file path, so no `tests/__init__.py` is

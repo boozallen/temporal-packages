@@ -20,7 +20,6 @@ compose them into something deployable.
 | [`foundry-temporal-agents`](./packages/foundry-temporal-agents/index.md) | Calling Strands agents from workflows over the A2A protocol | `foundry-temporal` |
 | [`foundry-doc-ingest`](./packages/foundry-doc-ingest/index.md) | Document ingestion activities — file validation, local storage, provenance tracking | _(none)_ |
 | [`foundry-doc-ingest-aws`](./packages/foundry-doc-ingest-aws/index.md) | AWS integration for document ingestion — S3 upload, Bedrock Knowledge Base sync | `foundry-doc-ingest` |
-| [`foundry-strands-agents`](./packages/foundry-strands-agents/index.md) | **Deprecated** — predecessor of `foundry-temporal-agents`, kept for existing adopters | `foundry-temporal` |
 
 ## Testing posture
 

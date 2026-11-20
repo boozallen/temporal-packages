@@ -50,24 +50,12 @@ sync activities. **Depends on:** `foundry-doc-ingest`.
 - [README](../../../packages/foundry-doc-ingest-aws/README.md)
 - [CHANGELOG](../../../packages/foundry-doc-ingest-aws/CHANGELOG.md)
 
-## `foundry-strands-agents` (deprecated)
-
-The predecessor of `foundry-temporal-agents`, kept for existing adopters.
-Importing it emits a `DeprecationWarning`; new code should use
-`foundry-temporal-agents`. **Depends on:** `foundry-temporal`.
-
-- [foundry-strands-agents](./foundry-strands-agents/index.md)
-- [README](../../../packages/foundry-strands-agents/README.md)
-- [CHANGELOG](../../../packages/foundry-strands-agents/CHANGELOG.md)
-
 ## Dependency graph
 
 ```
 foundry-agent-core (foundry-agent-packages)
        ↑
 foundry-temporal ←── foundry-temporal-agents
-       ↑
-       └──────────── foundry-strands-agents (deprecated)
 
 foundry-doc-ingest ←── foundry-doc-ingest-aws
 ```

@@ -14,7 +14,7 @@ Document existing codebase capabilities by creating OpenSpec specification files
 1. **Determine scope**
 
    - If capability name provided: Focus on documenting that specific capability
-   - If no input: Analyze the entire codebase to identify all major capabilities (e.g., foundry-temporal, foundry-strands-agents packages, workflows, activities, MCP integrations)
+   - If no input: Analyze the entire codebase to identify all major capabilities (e.g., foundry-temporal, foundry-temporal-agents packages, workflows, activities, MCP integrations)
 
 2. **Analyze the codebase**
 
@@ -69,7 +69,7 @@ Summarize: capabilities identified and documented, spec directories created, key
 - Complete specifications: use the regeneration test
 - No forward-looking: only document existing behavior
 - Reference implementation: include file paths for traceability
-- Start with core capabilities (e.g., foundry-temporal, foundry-strands-agents)
+- Start with core capabilities (e.g., foundry-temporal, foundry-temporal-agents)
 
 **Error Handling**
 

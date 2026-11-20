@@ -702,7 +702,7 @@ except Exception as e:
 ```python
 # Use with any agent framework
 from foundry_temporal import HILSignalsMixin
-from foundry_strands_agents.activities import call_strands_agent  # Strands
+from foundry_temporal_agents.activities import call_strands_agent  # Strands
 # OR
 from foundry_langchain_agents.activities import call_langchain_agent  # LangChain
 

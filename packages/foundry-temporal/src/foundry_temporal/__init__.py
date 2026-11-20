@@ -44,7 +44,7 @@ Usage Patterns:
 
 Agent Integration:
     For specific agent frameworks, use their dedicated packages:
-    - foundry_strands_agents - For Strands agent integration
+    - foundry_temporal_agents - For Strands agent integration
 """
 
 __author__ = "Foundry Baseline Team"

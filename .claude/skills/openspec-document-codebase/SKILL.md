@@ -11,7 +11,7 @@ metadata:
 
 Document existing codebase capabilities by creating OpenSpec specification files that describe current functionality.
 
-**Input**: Optional capability name (kebab-case). If provided, document only that capability. If omitted, analyze the entire codebase and document all major capabilities (e.g. foundry-temporal, foundry-strands-agents packages, workflows, activities, MCP in this repo).
+**Input**: Optional capability name (kebab-case). If provided, document only that capability. If omitted, analyze the entire codebase and document all major capabilities (e.g. foundry-temporal, foundry-temporal-agents packages, workflows, activities, MCP in this repo).
 
 **Steps**
 
@@ -51,7 +51,7 @@ Summarize: capabilities identified and documented, spec directories created, key
 - Complete: use regeneration test
 - No forward-looking: existing behavior only
 - Reference implementation: include file paths
-- Start with core capabilities (e.g. foundry-temporal, foundry-strands-agents)
+- Start with core capabilities (e.g. foundry-temporal, foundry-temporal-agents)
 
 **Error handling**
 
@@ -62,6 +62,6 @@ Summarize: capabilities identified and documented, spec directories created, key
 
 **Edge cases**
 
-- Monorepo with packages: Scope by package (e.g. foundry-temporal, foundry-strands-agents) or document cross-package capabilities; clarify with user if needed
+- Monorepo with packages: Scope by package (e.g. foundry-temporal, foundry-temporal-agents) or document cross-package capabilities; clarify with user if needed
 - Partial implementation: Document what exists and note gaps in Notes
 - Generated or external API: Document the observable contract; note source in Notes

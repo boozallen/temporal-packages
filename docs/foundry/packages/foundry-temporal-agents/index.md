@@ -6,7 +6,7 @@
 
 Temporal activities and clients for calling Strands agents from workflows,
 over the A2A (Agent-to-Agent) JSON-RPC protocol or the Query REST API.
-Replaces the deprecated [`foundry-strands-agents`](../foundry-strands-agents/index.md). **Depends on:**
+**Depends on:**
 [`foundry-temporal`](../foundry-temporal/index.md).
 
 ## Install

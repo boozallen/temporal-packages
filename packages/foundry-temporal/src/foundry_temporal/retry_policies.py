@@ -58,7 +58,7 @@ def get_retry_policy_for_activity(activity_type: str) -> RetryPolicy:
         ValueError: If activity_type is not recognized
 
     Note:
-        Agent retry policies are handled by foundry_strands_agent package
+        Agent retry policies are in foundry_temporal_agents.retry
     """
     policies = {
         "file": FILE_RETRY_POLICY,

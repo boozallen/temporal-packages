@@ -1,0 +1,64 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "foundry-temporal"
+version = "4.0.0"
+license = "Apache-2.0"
+license-files = ["LICENSE*", "NOTICE*"]
+description = "Foundry Temporal integration package"
+requires-python = ">=3.14,<3.16"
+
+dependencies = [
+    "temporalio>=1.21.1,<2",
+    "pydantic>=2.12.5,<3",
+    "prometheus-client>=0.23.1,<0.24",
+    "boto3>=1.42.24,<2",
+    "foundry-agent-core==1.4.0",
+    "httpx>=0.28.1,<0.29",
+    "aiohttp>=3.14.1,<4",
+    "cryptography>=46.0",
+    "opentelemetry-sdk>=1.44.0,<2",
+    "opentelemetry-exporter-otlp-proto-http>=1.44.0,<2",
+    "pyyaml>=6.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/foundry_temporal"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+pythonpath = ["src"]
+addopts = "-v --tb=short --strict-markers --strict-config --import-mode=importlib --cov=src/foundry_temporal --cov-report=term-missing --cov-report=html:htmlcov/foundry_temporal --cov-fail-under=70"
+markers = [
+    "unit: unit tests (fast, no external services or credentials required)",
+    "integration: integration tests (may require external services or credentials)",
+    "slow: tests that may take longer to run",
+    "network: tests that require network access",
+    "temporal: tests that interact with Temporal services",
+    "aws: tests that interact with AWS services",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+    "ignore:.*datetime.*:DeprecationWarning",
+    "ignore:.*pkg_resources.*:DeprecationWarning",
+]
+
+[tool.coverage.run]
+source = ["src/foundry_temporal"]
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+]

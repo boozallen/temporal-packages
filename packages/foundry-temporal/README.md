@@ -703,8 +703,6 @@ except Exception as e:
 # Use with any agent framework
 from foundry_temporal import HILSignalsMixin
 from foundry_temporal_agents.activities import call_strands_agent  # Strands
-# OR
-from foundry_langchain_agents.activities import call_langchain_agent  # LangChain
 
 @workflow.defn
 class AgentWorkflow(HILSignalsMixin):

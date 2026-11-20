@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - "*/v*"
+      - "!foundry-strands-agents/v*"
 
 # Safe default for any job that doesn't declare its own `permissions:`
 # block (e.g. a job added later without one) — falls back to no access
@@ -166,7 +167,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p /tmp/wheels
-          for pkg in foundry-temporal foundry-temporal-agents foundry-strands-agents foundry-doc-ingest foundry-doc-ingest-aws; do
+          for pkg in foundry-temporal foundry-temporal-agents foundry-doc-ingest foundry-doc-ingest-aws; do
             tag=$(gh release list --repo ${{ github.repository }} --json tagName,publishedAt \
               --jq "[.[] | select(.tagName | startswith(\"$pkg/\"))] | sort_by(.publishedAt) | last | .tagName")
             if [ -n "$tag" ] && [ "$tag" != "null" ]; then

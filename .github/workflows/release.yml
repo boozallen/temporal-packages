@@ -164,6 +164,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p /tmp/wheels
+          # foundry-temporal pins foundry-agent-core, which is not on PyPI.
+          # Keep in sync with packages/foundry-temporal/pyproject.toml.
+          gh release download foundry-agent-core/v1.4.0 \
+            --repo boozallen/foundry-agent-packages \
+            --pattern "*.whl" --dir /tmp/wheels --clobber
           for pkg in foundry-temporal foundry-temporal-agents foundry-strands-agents foundry-doc-ingest foundry-doc-ingest-aws; do
             tag=$(gh release list --repo ${{ github.repository }} --json tagName,publishedAt \
               --jq "[.[] | select(.tagName | startswith(\"$pkg/\"))] | sort_by(.publishedAt) | last | .tagName")
